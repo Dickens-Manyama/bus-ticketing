@@ -50,6 +50,40 @@ function renderSeat($seatNum, $seat, $isDriver = false) {
     $dataNum = 'data-seat-number="' . $seatNum . '"';
     return "<div class='$class' $dataId $dataNum title='$title'>$icon<span class='seat-number'>$seatNum</span></div>";
 }
+
+// Build a map of seat_number => seat object for fast lookup
+$seatMap = [];
+foreach ($seats as $s) {
+    $seatMap[$s->seat_number] = $s;
+}
+
+$layout = $bus->getSeatingLayout();
+$rows = $layout['rows'];
+$pattern = $layout['pattern'];
+$cols = $layout['cols'];
+$aislePositions = $layout['aisle_positions'];
+$seatsPerRow = $layout['seats_per_row'];
+
+// Generate seat labels for each row/col
+function getSeatLabel($row, $col, $pattern) {
+    $rowLetter = chr(65 + $row); // A, B, C, ...
+    $seatNum = 1;
+    $colIndex = 0;
+    foreach ($pattern as $p) {
+        if ($p === 'aisle') {
+            $colIndex++;
+            if ($colIndex - 1 == $col) return null;
+        } else {
+            for ($i = 0; $i < $p; $i++) {
+                if ($colIndex == $col) {
+                    return $rowLetter . ($i + 1);
+                }
+                $colIndex++;
+            }
+        }
+    }
+    return null;
+}
 ?>
 
 <div class="container py-4">
@@ -186,78 +220,34 @@ function renderSeat($seatNum, $seat, $isDriver = false) {
                             <!-- Seating Layout -->
                             <div class="seating-layout">
                                 <?php
-                                $busType = $bus->type;
-                                $rows = 12;
-                                $seatIndex = 0;
-                                $seats = array_values($seats); // Ensure numeric keys
-                                // Find the driver seat
-                                $driverSeat = null;
-                                foreach ($seats as $s) {
-                                    if ($s->seat_number === 'D') {
-                                        $driverSeat = $s;
-                                        break;
-                                    }
+                                // Render driver seat if present
+                                if (isset($seatMap['D'])) {
+                                    echo "<div class='seat-row mb-2' style='justify-content: flex-end;'>";
+                                    echo renderSeat('D', $seatMap['D'], true);
+                                    echo "</div>";
                                 }
-                                ?>
-                                <div class="seating-layout">
-                                    <div class="seat-row mb-2" style="justify-content: flex-end;">
+                                // Render seat rows
+                                for ($row = 0; $row < $rows; $row++): ?>
+                                    <div class="seat-row mb-2">
                                         <?php
-                                        // Render driver seat alone at the top right with custom style
-                                        if ($driverSeat) {
-                                            echo "<div class='seat driver-seat' style='width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#343a40,#212529);color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid #212529;box-shadow:0 2px 8px rgba(0,0,0,0.2);margin-right:10px;'>"
-                                                . "<span style='font-size:2rem;'><i class='bi bi-steering-wheel'></i></span>"
-                                                . "<span style='font-size:0.9rem;font-weight:bold;'>Driver</span>"
-                                                . "</div>";
+                                        $colIndex = 0;
+                                        foreach ($pattern as $p) {
+                                            if ($p === 'aisle') {
+                                                echo '<div class="aisle-space"></div>';
+                                                $colIndex++;
+                                            } else {
+                                                for ($i = 0; $i < $p; $i++) {
+                                                    $seatLabel = chr(65 + $row) . ($i + 1);
+                                                    $seat = $seatMap[$seatLabel] ?? null;
+                                                    echo renderSeat($seatLabel, $seat);
+                                                    $colIndex++;
+                                                }
+                                            }
                                         }
                                         ?>
                                     </div>
-                                    <?php
-                                    $seatIndex = 0;
-                                    for ($row = 0; $row < $rows; $row++): ?>
-                                        <div class="seat-row mb-2">
-                                            <?php
-                                            $left = ($busType === 'Luxury') ? 1 : 2;
-                                            $right = ($busType === 'Middle Class') ? 3 : 2;
-                                            // Left side seats
-                                            for ($i = 0; $i < $left; $i++) {
-                                                if ($seatIndex < count($seats) && $seats[$seatIndex]->seat_number !== 'D') {
-                                                    echo renderSeat($seats[$seatIndex]->seat_number, $seats[$seatIndex]);
-                                                    $seatIndex++;
-                                    } else {
-                                                    echo "<div class='seat seat-empty' title='No Seat'></div>";
-                                                }
-                                            }
-                                            // Aisle
-                                            echo '<div class="aisle-space"></div>';
-                                            // Right side seats
-                                            if ($busType === 'Luxury' && $row === $rows - 1) {
-                                                // Last row for Luxury: render all remaining seats (including toilet)
-                                                while ($seatIndex < count($seats)) {
-                                                    echo renderSeat($seats[$seatIndex]->seat_number, $seats[$seatIndex]);
-                                                    $seatIndex++;
-                                                }
-                                            } else {
-                                                for ($i = 0; $i < $right; $i++) {
-                                                    if ($seatIndex < count($seats) && $seats[$seatIndex]->seat_number === 'Toilet') {
-                                                        echo "<div class='seat toilet-seat' style='width:110px;height:60px;border-radius:12px;background:linear-gradient(135deg,#17a2b8,#138496);color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid #138496;box-shadow:0 2px 8px rgba(0,0,0,0.2);margin:0 10px;'>"
-                                                            . "<span style='font-size:2.5rem;'><i class='bi bi-droplet-half'></i></span>"
-                                                            . "<span style='font-size:1rem;font-weight:bold;'>Toilet</span>"
-                                                            . "</div>";
-                                                        $seatIndex++;
-                                                    } else if ($seatIndex < count($seats) && $seats[$seatIndex]->seat_number !== 'D') {
-                                                        echo renderSeat($seats[$seatIndex]->seat_number, $seats[$seatIndex]);
-                                                        $seatIndex++;
-                                                    } else {
-                                                        echo "<div class='seat seat-empty' title='No Seat'></div>";
-                                                        }
-                                                    }
-                                            }
-                                            ?>
-                                        </div>
-                                    <?php endfor; ?>
-                                </div>
+                                <?php endfor; ?>
                             </div>
-
                             <!-- Exit -->
                             <div class="exit-area text-center mt-3">
                                 <div class="exit-sign">
