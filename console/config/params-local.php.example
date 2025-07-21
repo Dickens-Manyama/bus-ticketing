@@ -1,0 +1,4 @@
+<?php
+return [
+    // Add your console-specific parameters here
+]; 

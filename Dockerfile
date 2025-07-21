@@ -32,6 +32,12 @@ RUN composer install --prefer-dist --no-dev --no-progress --no-scripts --optimiz
 # Copy example configs for production
 COPY common/config/main-local.php.example common/config/main-local.php
 COPY common/config/params-local.php.example common/config/params-local.php
+COPY frontend/config/main-local.php.example frontend/config/main-local.php
+COPY frontend/config/params-local.php.example frontend/config/params-local.php
+COPY backend/config/main-local.php.example backend/config/main-local.php
+COPY backend/config/params-local.php.example backend/config/params-local.php
+COPY console/config/main-local.php.example console/config/main-local.php
+COPY console/config/params-local.php.example console/config/params-local.php
 
 # Copy the rest of the application code
 COPY . .

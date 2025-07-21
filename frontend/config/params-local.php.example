@@ -1,0 +1,4 @@
+<?php
+return [
+    // Add your frontend-specific parameters here
+]; 
