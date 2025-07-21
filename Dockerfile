@@ -22,9 +22,8 @@ WORKDIR /app
 # Copy app files
 COPY . /app
 
-# Install dependencies for backend and frontend
-RUN cd /app/backend && composer install --no-dev --optimize-autoloader \
-    && cd /app/frontend && composer install --no-dev --optimize-autoloader
+# Install dependencies for the whole app
+RUN composer install --no-dev --optimize-autoloader
 
 # Copy nginx and supervisor configs
 COPY nginx.conf /etc/nginx/nginx.conf
