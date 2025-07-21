@@ -59,4 +59,4 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Expose port
 EXPOSE 8080
 
-CMD ["/usr/bin/supervisord"] 
+CMD ["php", "yii", "migrate", "--interactive=0"] 
