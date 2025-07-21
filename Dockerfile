@@ -29,6 +29,9 @@ COPY composer.json composer.lock ./
 # Install dependencies
 RUN composer install --prefer-dist --no-dev --no-progress --no-scripts --optimize-autoloader
 
+# Copy example config for production
+COPY common/config/main-local.php.example common/config/main-local.php
+
 # Copy the rest of the application code
 COPY . .
 

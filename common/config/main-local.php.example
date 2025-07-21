@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'components' => [
+        'db' => [
+            'class' => \yii\db\Connection::class,
+            'dsn' => getenv('DB_DSN') ?: 'pgsql:host=localhost;port=5432;dbname=new1',
+            'username' => getenv('DB_USERNAME') ?: 'postgres',
+            'password' => getenv('DB_PASSWORD') ?: 'root',
+            'charset' => 'utf8',
+        ],
+        'db_pgsql' => [
+            'class' => \yii\db\Connection::class,
+            'dsn' => getenv('DB_DSN') ?: 'pgsql:host=localhost;port=5432;dbname=new1',
+            'username' => getenv('DB_USERNAME') ?: 'postgres',
+            'password' => getenv('DB_PASSWORD') ?: 'root',
+            'charset' => 'utf8',
+        ],
+        'mailer' => [
+            'class' => \yii\symfonymailer\Mailer::class,
+            'viewPath' => '@common/mail',
+            'useFileTransport' => true,
+            // See README.md for mailer config
+        ],
+    ],
+]; 
