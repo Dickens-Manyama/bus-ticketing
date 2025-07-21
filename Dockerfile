@@ -42,6 +42,12 @@ COPY console/config/params-local.php.example console/config/params-local.php
 # Copy the rest of the application code
 COPY . .
 
+# Ensure runtime, assets, and uploads are writable
+RUN mkdir -p /app/frontend/runtime /app/frontend/web/assets /app/frontend/web/uploads \
+    && chmod -R 777 /app/frontend/runtime /app/frontend/web/assets /app/frontend/web/uploads \
+    && mkdir -p /app/backend/runtime /app/backend/web/assets /app/backend/web/uploads \
+    && chmod -R 777 /app/backend/runtime /app/backend/web/assets /app/backend/web/uploads
+
 # Run Yii init scripts if needed (example, adjust as necessary)
 # RUN php init --env=Production --overwrite=y
 
