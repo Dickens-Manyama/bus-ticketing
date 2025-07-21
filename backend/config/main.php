@@ -47,7 +47,6 @@ return [
             'enableStrictParsing' => false,
             'baseUrl' => '',
             'rules' => [
-                '' => 'site/login',
                 'dashboard' => 'dashboard/index',
                 'dashboard/index' => 'dashboard/index',
                 'dashboard/test' => 'dashboard/test',
@@ -85,6 +84,8 @@ return [
                 'seat-monitoring/get-seat-data' => 'seat-monitoring/get-seat-data',
                 'parcel/<action:\w+>' => 'parcel/<action>',
                 'parcel/<action:\w+>/<id:\d+>' => 'parcel/<action>',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
         ],
         'assetManager' => [
