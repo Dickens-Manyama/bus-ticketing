@@ -305,8 +305,8 @@ class BookingController extends Controller
         $booking = Booking::findOne($id);
         if (!$booking || $booking->user_id != Yii::$app->user->id) throw new NotFoundHttpException('Receipt not found.');
         
-        // Generate QR code with dynamic local IP address for mobile access
-        $receiptUrl = IpHelper::getServerUrl() . "/booking/mobile-verify?id=" . $booking->id;
+        // Generate QR code with public Render URL for mobile access
+        $receiptUrl = 'https://bus-ticketing-web.onrender.com/booking/mobile-verify?id=' . $booking->id;
         
         $builder = new \Endroid\QrCode\Builder\Builder();
         $result = $builder->build(
@@ -333,8 +333,8 @@ class BookingController extends Controller
         
         $print = Yii::$app->request->get('print', false);
         
-        // Generate QR code with dynamic local IP address
-        $receiptUrl = IpHelper::getServerUrl() . "/booking/mobile-verify?id=" . $booking->id;
+        // Generate QR code with public Render URL for mobile access
+        $receiptUrl = 'https://bus-ticketing-web.onrender.com/booking/mobile-verify?id=' . $booking->id;
         
         $builder = new \Endroid\QrCode\Builder\Builder();
         $result = $builder->build(
@@ -359,8 +359,8 @@ class BookingController extends Controller
         $booking = Booking::findOne($id);
         if (!$booking || $booking->user_id != Yii::$app->user->id) throw new NotFoundHttpException('Receipt not found.');
         
-        // Generate QR code for PDF using dynamic local IP address
-        $receiptUrl = IpHelper::getServerUrl() . "/booking/mobile-verify?id=" . $booking->id;
+        // Generate QR code for PDF using public Render URL
+        $receiptUrl = 'https://bus-ticketing-web.onrender.com/booking/mobile-verify?id=' . $booking->id;
         
         $builder = new \Endroid\QrCode\Builder\Builder();
         $result = $builder->build(

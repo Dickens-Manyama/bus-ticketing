@@ -109,6 +109,9 @@ class Bus extends ActiveRecord
 
     public function getAmenitiesArray()
     {
+        if (empty($this->amenities) || !is_string($this->amenities)) {
+            return [];
+        }
         return json_decode($this->amenities, true) ?: [];
     }
 
