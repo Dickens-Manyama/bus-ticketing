@@ -678,8 +678,8 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         if (selectedSeatId) {
-            // Navigate to review page with selected seat
-            const url = '<?= Url::to(['review']) ?>?bus_id=<?= $bus->id ?>&route_id=<?= $route->id ?>&seat_id=' + selectedSeatId;
+            // Navigate to payment page with selected seat
+            const url = '<?= Url::to(['payment']) ?>?bus_id=<?= $bus->id ?>&route_id=<?= $route->id ?>&seat_id=' + selectedSeatId;
             window.location.href = url;
         } else {
             alert('Please select a seat first!');
