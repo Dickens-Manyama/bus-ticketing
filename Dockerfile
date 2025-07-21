@@ -42,11 +42,17 @@ COPY console/config/params-local.php.example console/config/params-local.php
 # Copy the rest of the application code
 COPY . .
 
-# Ensure runtime, assets, and uploads are writable
+# Ensure runtime, assets, and uploads are writable and owned by root
 RUN mkdir -p /app/frontend/runtime /app/frontend/web/assets /app/frontend/web/uploads \
     && chmod -R 777 /app/frontend/runtime /app/frontend/web/assets /app/frontend/web/uploads \
+    && chown -R root:root /app/frontend/runtime /app/frontend/web/assets /app/frontend/web/uploads \
     && mkdir -p /app/backend/runtime /app/backend/web/assets /app/backend/web/uploads \
-    && chmod -R 777 /app/backend/runtime /app/backend/web/assets /app/backend/web/uploads
+    && chmod -R 777 /app/backend/runtime /app/backend/web/assets /app/backend/web/uploads \
+    && chown -R root:root /app/backend/runtime /app/backend/web/assets /app/backend/web/uploads
+
+# Set PHP-FPM to run as root
+RUN sed -i 's/^user = .*/user = root/' /usr/local/etc/php-fpm.d/www.conf && \
+    sed -i 's/^group = .*/group = root/' /usr/local/etc/php-fpm.d/www.conf
 
 # Run Yii init scripts if needed (example, adjust as necessary)
 # RUN php init --env=Production --overwrite=y
