@@ -44,6 +44,7 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'enableStrictParsing' => false,
             'baseUrl' => '',
             'rules' => [
                 '' => 'site/login',
