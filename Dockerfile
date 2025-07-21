@@ -1,6 +1,9 @@
 FROM php:8.3-fpm
 
-# Install system dependencies
+# Set environment variables for non-interactive install
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies and clean up
 RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
@@ -11,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    && docker-php-ext-install pdo pdo_pgsql pgsql zip gd mbstring xml
+    && docker-php-ext-install pdo pdo_pgsql pgsql zip gd mbstring xml \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
@@ -19,11 +23,17 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /app
 
-# Copy app files
-COPY . /app
+# Copy only composer files to leverage Docker cache
+COPY composer.json composer.lock ./
 
-# Install dependencies for the whole app
-RUN composer install --no-dev --optimize-autoloader
+# Install dependencies
+RUN composer install --prefer-dist --no-dev --no-progress --no-scripts --optimize-autoloader
+
+# Copy the rest of the application code
+COPY . .
+
+# Run Yii init scripts if needed (example, adjust as necessary)
+# RUN php init --env=Production --overwrite=y
 
 # Copy nginx and supervisor configs
 COPY nginx.conf /etc/nginx/nginx.conf

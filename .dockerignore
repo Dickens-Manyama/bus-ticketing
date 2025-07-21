@@ -1,0 +1,36 @@
+# Git and version control
+.git
+.github
+
+# Local development and IDE files
+.idea/
+.vscode/
+
+# Node dependencies
+node_modules/
+
+# Yii2 runtime and assets
+/backend/runtime
+/frontend/runtime
+/console/runtime
+/backend/web/assets
+/frontend/web/assets
+
+# Local logs
+*.log
+
+# Composer vendor directory (it's installed inside the container)
+vendor/
+
+# Local environment files
+.env
+.env.*
+
+# Test directories and files
+/tests/
+/backend/tests/
+/common/tests/
+/frontend/tests/
+/console/tests/
+codeception.yml
+*.suite.yml 
