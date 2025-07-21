@@ -1,0 +1,16 @@
+# Yii2
+/vendor/
+/runtime/
+/web/assets/
+/web/uploads/
+/.env
+/.env.*
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+/tests/_output/
+/tests/_support/_generated/
+composer.lock
+node_modules/
+*.log

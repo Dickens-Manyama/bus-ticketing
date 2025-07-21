@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: bus-ticketing-web
+    env: php
+    plan: free
+    buildCommand: "composer install --no-dev --optimize-autoloader"
+    startCommand: "php yii serve --host 0.0.0.0 --port 10000"
+    envVars:
+      - key: DB_DSN
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: YII_ENV
+        value: "prod"
+  - type: postgres
+    name: bus-ticketing-db
+    plan: free 
