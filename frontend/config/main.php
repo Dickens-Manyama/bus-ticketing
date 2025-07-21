@@ -92,6 +92,9 @@ return [
                 'parcel/mobile-verify/<id:\d+>' => 'parcel/mobile-verify',
             ],
         ],
+        'assetManager' => [
+            'linkAssets' => false,
+        ],
     ],
     'params' => $params,
 ];

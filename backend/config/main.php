@@ -86,6 +86,9 @@ return [
                 'parcel/<action:\w+>/<id:\d+>' => 'parcel/<action>',
             ],
         ],
+        'assetManager' => [
+            'linkAssets' => false,
+        ],
     ],
     'params' => array_merge($params, [
         'frontendUrl' => 'http://192.168.100.76:8082', // Updated to match frontend server
