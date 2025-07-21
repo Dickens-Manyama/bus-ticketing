@@ -50,6 +50,14 @@ RUN mkdir -p /app/frontend/runtime /app/frontend/web/assets /app/frontend/web/up
     && chmod -R 777 /app/backend/runtime /app/backend/web/assets /app/backend/web/uploads \
     && chown -R www-data:www-data /app/backend/runtime /app/backend/web/assets /app/backend/web/uploads
 
+# Debug: List asset, css, and js directories at runtime
+RUN echo '--- FRONTEND ASSETS ---' && ls -l /app/frontend/web/assets || true
+RUN echo '--- FRONTEND CSS ---' && ls -l /app/frontend/web/css || true
+RUN echo '--- FRONTEND JS ---' && ls -l /app/frontend/web/js || true
+RUN echo '--- BACKEND ASSETS ---' && ls -l /app/backend/web/assets || true
+RUN echo '--- BACKEND CSS ---' && ls -l /app/backend/web/css || true
+RUN echo '--- BACKEND JS ---' && ls -l /app/backend/web/js || true
+
 # RUN php init --env=Production --overwrite=y
 
 # Copy nginx and supervisor configs
