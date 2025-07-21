@@ -1,4 +1,9 @@
 <?php
 return [
-    // Add your frontend-specific config here
+    'components' => [
+        'request' => [
+            'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY') ?: 'changeme',
+        ],
+        // Add your frontend-specific config here
+    ],
 ]; 
