@@ -243,10 +243,10 @@ function getSeatLabel($row, $col, $pattern) {
                                                     $colIndex++;
                                                 }
                                             }
-                                        }
-                                        ?>
-                                    </div>
-                                <?php endfor; ?>
+                                            }
+                                            ?>
+                                        </div>
+                                    <?php endfor; ?>
                             </div>
                             <!-- Exit -->
                             <div class="exit-area text-center mt-3">

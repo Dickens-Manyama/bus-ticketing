@@ -72,12 +72,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="qr-code-section text-center mb-4">
                         <h5 class="mb-3"><i class="bi bi-qr-code"></i> QR Code for Boarding</h5>
                         <div class="qr-code-container">
+                            <pre><?= isset($qrImageData) ? 'LENGTH: ' . strlen($qrImageData) : 'qrImageData not set' ?></pre>
                             <?php if (isset($qrImageData)): ?>
                                 <img src="data:image/png;base64,<?= $qrImageData ?>" alt="QR Code" class="img-fluid border rounded" style="max-width: 200px;">
                             <?php else: ?>
-                                <div class="alert alert-warning">
-                                    <i class="bi bi-exclamation-triangle"></i> QR Code could not be generated.
-                                </div>
+                                <?php if (isset($qrError) && $qrError): ?>
+                                    <div class="alert alert-danger">
+                                        <strong>QR Code Error:</strong> <?= Html::encode($qrError) ?>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> QR Code could not be generated.
+                                    </div>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                         <small class="text-muted mt-2 d-block">Scan this QR code when boarding the bus</small>

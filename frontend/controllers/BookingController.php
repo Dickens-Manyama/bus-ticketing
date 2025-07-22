@@ -11,6 +11,7 @@ use common\models\Route;
 use common\models\Seat;
 use common\models\Booking;
 use common\components\IpHelper;
+use Endroid\QrCode\Writer\PngWriter;
 
 class BookingController extends Controller
 {
@@ -302,32 +303,45 @@ class BookingController extends Controller
     // Step 6: Show receipt with QR code
     public function actionReceipt($id)
     {
-        $booking = Booking::findOne($id);
-        if (!$booking || $booking->user_id != Yii::$app->user->id) throw new NotFoundHttpException('Receipt not found.');
-        
-        // Generate QR code with public Render URL for mobile access
-        $receiptUrl = 'https://bus-ticketing-web.onrender.com/booking/mobile-verify?id=' . $booking->id;
-        
-        $builder = new \Endroid\QrCode\Builder\Builder();
-        $result = $builder->build(
-            data: $receiptUrl,
-            size: 200,
-            margin: 10
-        );
-        
-        // Convert to base64 for display
-        $qrImageData = base64_encode($result->getString());
-        
-        return $this->render('receipt', [
-            'booking' => $booking,
-            'qrImageData' => $qrImageData,
-            'receiptUrl' => $receiptUrl,
-        ]);
+        try {
+            ini_set('display_errors', 1);
+            error_reporting(E_ALL);
+            $booking = Booking::findOne($id);
+            if (!$booking || $booking->user_id != Yii::$app->user->id) throw new NotFoundHttpException('Receipt not found.');
+            
+            // Generate QR code with public Render URL for mobile access
+            $receiptUrl = 'https://bus-ticketing-web.onrender.com/booking/mobile-verify?id=' . $booking->id;
+            $qrImageData = null;
+            $qrError = null;
+            try {
+                $builder = new \Endroid\QrCode\Builder\Builder(new PngWriter());
+                $result = $builder->build(
+                    data: $receiptUrl,
+                    size: 200,
+                    margin: 10
+                );
+                $qrImageData = base64_encode($result->getString());
+            } catch (\Throwable $e) {
+                $qrError = $e->getMessage();
+            }
+            
+            return $this->render('receipt', [
+                'booking' => $booking,
+                'qrImageData' => $qrImageData,
+                'receiptUrl' => $receiptUrl,
+                'qrError' => $qrError,
+            ]);
+        } catch (\Throwable $e) {
+            echo '<pre>Fatal error in actionReceipt: ' . $e->getMessage() . '</pre>';
+            exit;
+        }
     }
 
     // Mobile-optimized receipt view (for QR code scanning)
     public function actionMobileReceipt($id)
     {
+        ini_set('display_errors', 1);
+        error_reporting(E_ALL);
         $booking = Booking::findOne($id);
         if (!$booking) throw new NotFoundHttpException('Receipt not found.');
         
@@ -336,7 +350,7 @@ class BookingController extends Controller
         // Generate QR code with public Render URL for mobile access
         $receiptUrl = 'https://bus-ticketing-web.onrender.com/booking/mobile-verify?id=' . $booking->id;
         
-        $builder = new \Endroid\QrCode\Builder\Builder();
+        $builder = new \Endroid\QrCode\Builder\Builder(new PngWriter());
         $result = $builder->build(
             data: $receiptUrl,
             size: 150,
@@ -350,19 +364,22 @@ class BookingController extends Controller
             'qrImageData' => $qrImageData,
             'receiptUrl' => $receiptUrl,
             'print' => $print,
+            'qrError' => null, // Initialize with null
         ]);
     }
 
     // PDF Receipt generation
     public function actionPdfReceipt($id)
     {
+        ini_set('display_errors', 1);
+        error_reporting(E_ALL);
         $booking = Booking::findOne($id);
         if (!$booking || $booking->user_id != Yii::$app->user->id) throw new NotFoundHttpException('Receipt not found.');
         
         // Generate QR code for PDF using public Render URL
         $receiptUrl = 'https://bus-ticketing-web.onrender.com/booking/mobile-verify?id=' . $booking->id;
         
-        $builder = new \Endroid\QrCode\Builder\Builder();
+        $builder = new \Endroid\QrCode\Builder\Builder(new PngWriter());
         $result = $builder->build(
             data: $receiptUrl,
             size: 150,
@@ -374,6 +391,7 @@ class BookingController extends Controller
         $content = $this->renderPartial('receipt_pdf', [
             'booking' => $booking,
             'qrImageData' => $qrImageData,
+            'qrError' => null, // Initialize with null
         ]);
         
         // Generate PDF
@@ -815,5 +833,23 @@ class BookingController extends Controller
             'created_at' => date('Y-m-d H:i:s', $booking->created_at),
             'scanned_at' => $booking->scanned_at ? date('Y-m-d H:i:s', $booking->scanned_at) : null,
         ];
+    }
+
+    public function actionQrRaw($id)
+    {
+        $booking = Booking::findOne($id);
+        if (!$booking) {
+            throw new \yii\web\NotFoundHttpException('Booking not found.');
+        }
+        $receiptUrl = 'https://bus-ticketing-web.onrender.com/booking/mobile-verify?id=' . $booking->id;
+        $builder = new \Endroid\QrCode\Builder\Builder(new \Endroid\QrCode\Writer\PngWriter());
+        $result = $builder->build(
+            data: $receiptUrl,
+            size: 200,
+            margin: 10
+        );
+        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->headers->add('Content-Type', 'image/png');
+        return $result->getString();
     }
 } 
