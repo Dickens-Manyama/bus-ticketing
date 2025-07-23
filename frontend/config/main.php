@@ -1,9 +1,4 @@
-// Add this inside the 'components' array in your config
-'response' => [
-    'on beforeSend' => function ($event) {
-        $event->sender->headers->add('Content-Security-Policy', "default-src 'self'; img-src 'self' data:;");
-    },
-],
+
 <?php
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
@@ -21,6 +16,11 @@ return [
     'defaultRoute' => 'site/index',
     'homeUrl' => '/site/index',
     'components' => [
+        'response' => [
+            'on beforeSend' => function ($event) {
+                $event->sender->headers->add('Content-Security-Policy', "default-src 'self'; img-src 'self' data:;");
+            },
+        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
             'baseUrl' => '',
