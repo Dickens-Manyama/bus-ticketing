@@ -220,12 +220,12 @@ function getSeatLabel($row, $col, $pattern) {
                             <!-- Seating Layout -->
                             <div class="seating-layout">
                                 <?php
-                                // Render driver seat if present
-                                if (isset($seatMap['D'])) {
-                                    echo "<div class='seat-row mb-2' style='justify-content: flex-end;'>";
-                                    echo renderSeat('D', $seatMap['D'], true);
-                                    echo "</div>";
-                                }
+                                // Render driver seat at front left for all layouts
+                                echo "<div class='seat-row mb-2' style='justify-content: flex-start;'>";
+                                echo "<div style='width:60px;'></div>"; // empty space before driver
+                                echo renderSeat('Driver', null, true);
+                                echo "</div>";
+
                                 // Render seat rows
                                 for ($row = 0; $row < $rows; $row++): ?>
                                     <div class="seat-row mb-2">
@@ -239,14 +239,19 @@ function getSeatLabel($row, $col, $pattern) {
                                                 for ($i = 0; $i < $p; $i++) {
                                                     $seatLabel = chr(65 + $row) . ($i + 1);
                                                     $seat = $seatMap[$seatLabel] ?? null;
-                                                    echo renderSeat($seatLabel, $seat);
+                                                    // Render toilet at last row, last col for luxury
+                                                    if ($bus->seating_config === '1x2' && $row == $rows-1 && $colIndex == 3) {
+                                                        echo renderSeat('Toilet', (object)['seat_number'=>'Toilet','status'=>'toilet']);
+                                                    } else {
+                                                        echo renderSeat($seatLabel, $seat);
+                                                    }
                                                     $colIndex++;
                                                 }
                                             }
-                                            }
-                                            ?>
-                                        </div>
-                                    <?php endfor; ?>
+                                        }
+                                        ?>
+                                    </div>
+                                <?php endfor; ?>
                             </div>
                             <!-- Exit -->
                             <div class="exit-area text-center mt-3">

@@ -139,7 +139,7 @@ class Bus extends ActiveRecord
         // You can add more cases for each real bus type/configuration.
         switch ($this->seating_config) {
             case self::SEATING_1X2:
-                // Example: 1 seat, aisle, 2 seats (3 seats per row)
+                // Luxury: 1 seat (left), aisle, 2 seats (right), driver at front left, toilet at back right
                 $seatsPerRow = 3;
                 $rows = ceil($this->seat_count / $seatsPerRow);
                 return [
@@ -148,9 +148,11 @@ class Bus extends ActiveRecord
                     'aisle_positions' => [1],
                     'pattern' => [1, 'aisle', 2],
                     'seats_per_row' => $seatsPerRow,
+                    'driver_col' => 0,
+                    'toilet_col' => 3,
                 ];
             case self::SEATING_2X2:
-                // Example: 2 seats, aisle, 2 seats (4 seats per row)
+                // Semi-luxury: 2 seats (left), aisle, 2 seats (right), driver at front left
                 $seatsPerRow = 4;
                 $rows = ceil($this->seat_count / $seatsPerRow);
                 return [
@@ -159,9 +161,10 @@ class Bus extends ActiveRecord
                     'aisle_positions' => [2],
                     'pattern' => [2, 'aisle', 2],
                     'seats_per_row' => $seatsPerRow,
+                    'driver_col' => 0,
                 ];
             case self::SEATING_2X3:
-                // Example: 2 seats, aisle, 3 seats (5 seats per row)
+                // Middle class: 2 seats (left), aisle, 3 seats (right), driver at front left
                 $seatsPerRow = 5;
                 $rows = ceil($this->seat_count / $seatsPerRow);
                 return [
@@ -170,8 +173,8 @@ class Bus extends ActiveRecord
                     'aisle_positions' => [2],
                     'pattern' => [2, 'aisle', 3],
                     'seats_per_row' => $seatsPerRow,
+                    'driver_col' => 0,
                 ];
-            // Add more cases here for other real bus types/configs as needed
             default:
                 // fallback to 2x2
                 $seatsPerRow = 4;
