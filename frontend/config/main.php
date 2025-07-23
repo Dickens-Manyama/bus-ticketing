@@ -16,6 +16,11 @@ return [
     'defaultRoute' => 'site/index',
     'homeUrl' => '/site/index',
     'components' => [
+        'response' => [
+            'on beforeSend' => function ($event) {
+                $event->sender->headers->add('Content-Security-Policy', "default-src 'self'; img-src 'self' data:;");
+            },
+        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
             'baseUrl' => '',
