@@ -134,41 +134,44 @@ class Bus extends ActiveRecord
 
     public function getSeatingLayout()
     {
-        // Calculate rows based on actual seat count and seating configuration
+        // --- SEAT MAP LAYOUTS ---
+        // Adjust these layouts to match your real bus seat maps.
+        // You can add more cases for each real bus type/configuration.
         switch ($this->seating_config) {
             case self::SEATING_1X2:
-                // 1 seat, aisle, 2 seats (columns: 1 | aisle | 2) = 3 seats per row
+                // Example: 1 seat, aisle, 2 seats (3 seats per row)
                 $seatsPerRow = 3;
                 $rows = ceil($this->seat_count / $seatsPerRow);
                 return [
                     'rows' => $rows,
                     'cols' => 4, // 1 seat + aisle + 2 seats
-                    'aisle_positions' => [1], // after first seat
+                    'aisle_positions' => [1],
                     'pattern' => [1, 'aisle', 2],
                     'seats_per_row' => $seatsPerRow,
                 ];
             case self::SEATING_2X2:
-                // 2 seats, aisle, 2 seats (columns: 2 | aisle | 2) = 4 seats per row
+                // Example: 2 seats, aisle, 2 seats (4 seats per row)
                 $seatsPerRow = 4;
                 $rows = ceil($this->seat_count / $seatsPerRow);
                 return [
                     'rows' => $rows,
                     'cols' => 5, // 2 seats + aisle + 2 seats
-                    'aisle_positions' => [2], // after second seat
+                    'aisle_positions' => [2],
                     'pattern' => [2, 'aisle', 2],
                     'seats_per_row' => $seatsPerRow,
                 ];
             case self::SEATING_2X3:
-                // 2 seats, aisle, 3 seats (columns: 2 | aisle | 3) = 5 seats per row
+                // Example: 2 seats, aisle, 3 seats (5 seats per row)
                 $seatsPerRow = 5;
                 $rows = ceil($this->seat_count / $seatsPerRow);
                 return [
                     'rows' => $rows,
                     'cols' => 6, // 2 seats + aisle + 3 seats
-                    'aisle_positions' => [2], // after second seat
+                    'aisle_positions' => [2],
                     'pattern' => [2, 'aisle', 3],
                     'seats_per_row' => $seatsPerRow,
                 ];
+            // Add more cases here for other real bus types/configs as needed
             default:
                 // fallback to 2x2
                 $seatsPerRow = 4;

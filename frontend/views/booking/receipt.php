@@ -76,8 +76,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php if (isset($qrImageData) && $qrImageData): ?>
                                 <img src="data:image/png;base64,<?= $qrImageData ?>" alt="QR Code" class="img-fluid border rounded" style="max-width: 200px;">
                             <?php else: ?>
-                                <div class="alert alert-warning">
-                                    <i class="bi bi-exclamation-triangle"></i> QR Code could not be generated.
+                                <div class="alert alert-warning mb-2">
+                                    <i class="bi bi-exclamation-triangle"></i> QR Code could not be generated locally.<br>
+                                    <?php if (isset($receiptUrl)): ?>
+                                        <span>Fallback QR code (external):</span><br>
+                                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=<?= urlencode($receiptUrl) ?>" alt="QR Code Fallback" class="img-fluid border rounded" style="max-width: 200px;">
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
                         </div>
